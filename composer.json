@@ -1,0 +1,23 @@
+{
+    "name": "rudak/picture-grabber",
+    "type": "symfony-bundle",
+    "description": "Symfony2 PictureGraber, a simple tool for grab pictures",
+    "keywords": ["pixel","Lorem","grab","pictures"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kadur Arnaud",
+            "email": "contact@kadur-arnaud.fr",
+            "homepage": "http://kadur-arnaud.fr"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-0": {
+            "Rudak\\PictureGrabber": ""
+        }
+    },
+    "target-dir": "Rudak/PictureGrabber",
+    "minimum-stability": "stable"
+}
