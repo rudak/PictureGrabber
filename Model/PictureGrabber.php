@@ -17,6 +17,9 @@ class PictureGrabber
     private $dir;
     private $url;
     private $prefix;
+    private $http;
+    private $content_length;
+    private $error;
 
     public function __construct($url, $dir, $prefix = null, $fileName_length = 5)
     {
@@ -33,14 +36,27 @@ class PictureGrabber
 
         if ($this->checkDir(dirname($path))) {
             if ($this->createFile($path)) {
-                $ch = curl_init($this->url);
-                $fp = fopen($path, 'wb+');
+                $this->http = null;
+                while ($this->http != 200) {
+                    $ch = curl_init($this->url);
+                    $fp = fopen($path, 'wb+');
 
-                curl_setopt($ch, CURLOPT_FILE, $fp);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_exec($ch);
-                curl_close($ch);
-                fclose($fp);
+                    curl_setopt($ch, CURLOPT_FILE, $fp);
+                    curl_setopt($ch, CURLOPT_HEADER, 0);
+                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+                    if (false === curl_exec($ch)) {
+                        $this->error = curl_error($ch);
+                    }
+
+                    $this->http           = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    $this->content_length = curl_getinfo($ch, CURLINFO_SIZE_DOWNLOAD);
+
+                    curl_close($ch);
+                    fclose($fp);
+                }
 
                 #TODO : verifier poids image recue
 
@@ -97,5 +113,29 @@ class PictureGrabber
     private function getAbsoluteDirPath()
     {
         return __DIR__ . $this->dir;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHttp()
+    {
+        return $this->http;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContentLength()
+    {
+        return $this->content_length;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getError()
+    {
+        return $this->error;
     }
 } 
