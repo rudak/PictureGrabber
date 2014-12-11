@@ -57,9 +57,6 @@ class PictureGrabber
                     curl_close($ch);
                     fclose($fp);
                 }
-
-                #TODO : verifier poids image recue
-
                 return true;
             } else {
                 return false;
