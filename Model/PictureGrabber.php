@@ -59,11 +59,10 @@ class PictureGrabber
                 }
                 return true;
             } else {
-                echo 'Impossible de creer ' . $path;
-                return false;
+                return 'Impossible de creer ' . $path;
             }
         } else {
-            return false;
+            return 'Probleme avec le dossier ' . dirname($path);
         }
     }
 
