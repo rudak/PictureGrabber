@@ -59,6 +59,7 @@ class PictureGrabber
                 }
                 return true;
             } else {
+                echo 'Impossible de creer ' . $path;
                 return false;
             }
         } else {
