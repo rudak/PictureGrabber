@@ -59,10 +59,12 @@ class PictureGrabber
                 }
                 return true;
             } else {
-                return 'Impossible de creer ' . $path;
+                $this->error = 'Impossible de creer ' . $path;
+                return false;
             }
         } else {
-            return 'Probleme avec le dossier ' . dirname($path);
+            $this->error = 'Probleme avec le dossier ' . dirname($path);
+            return false;
         }
     }
 
