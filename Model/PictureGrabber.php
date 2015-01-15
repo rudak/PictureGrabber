@@ -24,17 +24,23 @@ class PictureGrabber
     public function __construct($url, $dir, $prefix = null, $fileName_length = 5)
     {
         $this->url             = $url;
-        $this->dir             = '../../../../../../../web/' . $dir;
+        //$this->dir             = '../../../../../../../web/' . $dir;
+        $this->dir             = $dir;
         $this->prefix          = $prefix;
-        $this->fileName_length = $fileName_length;
+        $this->fileName_length = ($fileName_length<=36)?$fileName_length:36;
     }
 
-    public function getImage()
+    public function getImage($filename = null)
     {
-        $this->setFileName();
+        if(null === $filename){
+            $this->setFileName();
+        } else {
+            $this->fileName = $filename;
+        }
+        
         $path = $this->getAbsoluteFilePath();
 
-        if ($this->checkDir(dirname($path))) {
+        if ($this->checkDir($this->dir)) {
             if ($this->createFile($path)) {
                 $this->http = null;
                 while ($this->http != 200) {
@@ -59,11 +65,9 @@ class PictureGrabber
                 }
                 return true;
             } else {
-                $this->error = 'Impossible de creer ' . $path;
                 return false;
             }
         } else {
-            $this->error = 'Probleme avec le dossier ' . dirname($path);
             return false;
         }
     }
@@ -76,9 +80,11 @@ class PictureGrabber
     private function checkDir($dir)
     {
         if (!file_exists($dir)) {
+            $this->error = 'Le dossier '.$dir.' n\'existe pas';
             return false;
         }
         if (!is_writable($dir)) {
+            $this->error = 'Le dossier '.$dir.' n\'est pas ecrivable^^';
             return false;
         }
         return true;
@@ -93,6 +99,7 @@ class PictureGrabber
             }
             return 'fichier créé';
         } catch (\Exception $e) {
+            $this->error = 'Impossible de creer ' . $path;
             return false;
         }
     }
@@ -106,12 +113,12 @@ class PictureGrabber
 
     private function getAbsoluteFilePath()
     {
-        return $this->getAbsoluteDirPath() . '/' . $this->fileName;
+        return $this->getAbsoluteDirPath() .DIRECTORY_SEPARATOR. $this->fileName;
     }
 
     private function getAbsoluteDirPath()
     {
-        return __DIR__ . $this->dir;
+        return realpath($this->dir);
     }
 
     /**
